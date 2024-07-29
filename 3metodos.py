@@ -1,5 +1,5 @@
 import time
-
+#Metodo Contiguo: 
 class ContiguousMemoryAllocator:
     def __init__(self, total_memory):
         self.memory = [False] * total_memory  # False indica bloque libre
@@ -31,6 +31,8 @@ class Node:
         self.free = free
         self.next = None
 
+
+#Metodo de lista ligada
 class LinkedListMemoryAllocator:
     def __init__(self, total_memory):
         self.head = Node(total_memory, 0)
@@ -57,10 +59,55 @@ class LinkedListMemoryAllocator:
                 break
             current = current.next
 
+
+#Metodo Indexada: 
+class IndexedMemoryAllocator:
+    def __init__(self, total_memory):
+        self.memory = [False] * total_memory  # False indica bloque libre
+        self.total_memory = total_memory
+        self.index_table = {}  # Tabla de indices para cada proceso
+
+    def allocate(self, process_id, size):
+        """
+        Asigna bloques de memoria para un proceso dado un tamaño especificado.
+        Retorna una lista de indices o -1 si no hay suficientes bloques libres.
+        """
+        blocks_allocated = 0
+        indices = []
+
+        for i in range(self.total_memory):
+            if not self.memory[i]:
+                self.memory[i] = True
+                indices.append(i)
+                blocks_allocated += 1
+                if blocks_allocated == size:
+                    self.index_table[process_id] = indices
+                    return indices
+        
+        # No se encontraron suficientes bloques libres
+        for i in indices:
+            self.memory[i] = False  # Liberar bloques asignados temporalmente
+        return -1
+
+    def deallocate(self, process_id):
+        """
+        Libera los bloques de memoria asignados a un proceso especifico.
+        """
+        if process_id in self.index_table:
+            for index in self.index_table[process_id]:
+                self.memory[index] = False
+            del self.index_table[process_id]
+
 def measure_time(allocator, allocations):
     start_time = time.time()
     for size in allocations:
         allocator.allocate(size)
+    end_time = time.time()
+    return end_time - start_time
+def measure_time2(allocator, allocations):
+    start_time = time.time()
+    for i, size in enumerate(allocations):
+        allocator.allocate(i, size)
     end_time = time.time()
     return end_time - start_time
 
@@ -70,13 +117,17 @@ def main():
 
     contiguous_allocator = ContiguousMemoryAllocator(total_memory)
     linked_list_allocator = LinkedListMemoryAllocator(total_memory)
+    indexed_allocator = IndexedMemoryAllocator(total_memory)
+   
 
     contiguous_time = measure_time(contiguous_allocator, allocations)
     linked_list_time = measure_time(linked_list_allocator, allocations)
+    indexed_time = measure_time2(indexed_allocator, allocations)
     contiguous_time *= 100
     linked_list_time *= 100
     print(f"Tiempo de ejecucion (Contiguo): {contiguous_time:.6f} segundos")
     print(f"Tiempo de ejecucion (Lista Enlazada): {linked_list_time:.6f} segundos")
+    print(f"Tiempo de ejecucion (Indexado): {indexed_time:.6f} segundos")
 
 if __name__ == "__main__":
     main()
