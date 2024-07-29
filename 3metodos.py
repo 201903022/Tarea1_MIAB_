@@ -123,8 +123,9 @@ def main():
     contiguous_time = measure_time(contiguous_allocator, allocations)
     linked_list_time = measure_time(linked_list_allocator, allocations)
     indexed_time = measure_time2(indexed_allocator, allocations)
-    contiguous_time *= 100
-    linked_list_time *= 100
+    contiguous_time *= 1000
+    linked_list_time *= 1000
+    indexed_time *= 1000
     print(f"Tiempo de ejecucion (Contiguo): {contiguous_time:.6f} segundos")
     print(f"Tiempo de ejecucion (Lista Enlazada): {linked_list_time:.6f} segundos")
     print(f"Tiempo de ejecucion (Indexado): {indexed_time:.6f} segundos")
