@@ -5,22 +5,27 @@ class BitVectorMemoryAllocator:
         self.memory = [0] * total_memory  # 0 indica bloque libre
         self.total_memory = total_memory
         self.memory[5] = 1
+
+    #funcion para asignar espacio por bloque
     def allocate(self, size):
         for start in range(self.total_memory - size + 1):
             if all(self.memory[start + i] == 0 for i in range(size)):
                 for i in range(size):
                     self.memory[start + i] = 1  # Marcar como ocupado
                 return start
-        return -1  # No hay bloques libres de suficiente tamano
+        return -1  # Erro espacio insuficiente o tamaño mas grande
 
+    #funcion para liberar espacio por bloque
     def deallocate(self, start, size):
         for i in range(start, start + size):
             self.memory[i] = 0  # Marcar como libre
 
+#funcion para medir el tiempo de ejecucion
 def measure_time(allocator, allocations):
     start_time = time.time()
     print("inicio")
     print(allocator.memory)
+    #ir agregando bloques segun el vector aloccation
     for size in allocations:
         allocator.allocate(size)
     end_time = time.time()
@@ -31,6 +36,8 @@ def measure_time(allocator, allocations):
     print(allocator.memory)
     
     allocator.allocate(8)
+    #allocator.allocate(2)
+    #allocator.allocate(1)
     print("final 2")
     print(allocator.memory)
     return end_time - start_time
@@ -48,7 +55,7 @@ def main():
         bit_vector_time *= 10000
         time += bit_vector_time
         print(f"Tiempo de ejecucion (Vector de Bits): {bit_vector_time:.6f} segundos")
-    print(f"Tiempo promedio (Vector de Bits): {time/5:.6f} segundos")
+    print(f"Tiempo promedio (Vector de Bits): {time/1:.6f} segundos")
 
 if __name__ == "__main__":
     main()
