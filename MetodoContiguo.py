@@ -36,7 +36,7 @@ def main():
     global globalTime
     for i in range(5): 
         total_memory = 1000
-        allocations = [3,300,500,5]
+        allocations = [3,2,300,500,5]
 
         contiguous_allocator = ContiguousMemoryAllocator(total_memory)
        # print("Memoria: ", contiguous_allocator.memory)
